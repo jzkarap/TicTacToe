@@ -79,7 +79,18 @@ namespace TicTacToe
 			string line2 = $"______________________________________";
 			string bottomOfBoard = $"	{spaces[6]}	|	{spaces[7]}	|	{spaces[8]}";
 
-			Console.WriteLine($"1.) Top Left");
+			string currentPlayer = null;
+
+			if (playerTurn % 2 == 0)
+			{
+				currentPlayer = "Player 1";
+			}
+			if (playerTurn % 2 == 1)
+			{
+				currentPlayer = "Player 2";
+			}
+
+			Console.WriteLine($"\n1.) Top Left");
 			Console.WriteLine($"2.) Top Mid".PadRight(28) + topOfBoard);
 			Console.WriteLine($"3.) Top Right".PadRight(30) + line1);
 			Console.WriteLine($"4.) Mid Left");
@@ -88,6 +99,7 @@ namespace TicTacToe
 			Console.WriteLine("7.) Bottom Left");
 			Console.WriteLine("8.) Bottom Mid".PadRight(28) + bottomOfBoard);
 			Console.WriteLine("9.) Bottom Right");
+			Console.WriteLine($"\n{currentPlayer}'s turn\n");
 
 			// WIN CONDITIONS -- easier way to write this??
 			for (int i = 0; i < spaces.Length - 6; i++)
@@ -214,6 +226,7 @@ namespace TicTacToe
 					isX = !isX;
 					isO = !isO;
 				}
+
 				BuildBoard(isX, isO, isPlayerOne, spaces, count, playerTurn);
 			}
 
@@ -251,6 +264,11 @@ namespace TicTacToe
 
 		}
 
+		/// <summary>
+		/// Concludes game
+		/// </summary>
+		/// <param name="playerTurn">Congratulates appropriate player</param>
+		/// <param name="winState">Detects if winner exists or game was tied</param>
 		static void GameOver(int playerTurn, bool winState)
 		{
 			string userChoice = null;
