@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Linq;
 
 namespace TicTacToe
 {
@@ -25,13 +26,18 @@ namespace TicTacToe
 
 			string[] spaces = new string[9];
 
-			Console.WriteLine("Please pick a letter for player 1: (X) or (O)");
+			Console.Clear();
+			Console.WriteLine("Please pick a letter for player 1: (X) or (O)\n");
 
 			string input = Console.ReadLine().ToUpper();
 
 			while (input != "X" && input != "O")
 			{
-				Console.WriteLine("Please choose (X) or (O)");
+				Console.WriteLine("");
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				ClearCurrentConsoleLine();
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				ClearCurrentConsoleLine();
 				input = Console.ReadLine().ToUpper();
 			}
 
@@ -45,8 +51,11 @@ namespace TicTacToe
 				isO = true;
 			}
 
-			Console.WriteLine("Let's begin!");
-			Thread.Sleep(200);
+			Thread.Sleep(400);
+			Console.WriteLine("\nOkay!");
+			Thread.Sleep(600);
+			Console.WriteLine("\nLet's begin!");
+			Thread.Sleep(600);
 			Console.Clear();
 
 			// Calls BuildBoard, passing in user chosen letter + initial status
@@ -87,18 +96,16 @@ namespace TicTacToe
 					spaces[i + 3] == "X" &&
 					spaces[i + 6] == "X")
 				{
-					Console.WriteLine("X WINS!");
-					Thread.Sleep(800);
-					GameOver(playerTurn);
+					Console.WriteLine("\nX WINS!");
+					GameOver(playerTurn, true);
 				}
 
 				if (spaces[i] == "O" &&
 					spaces[i + 3] == "O" &&
 					spaces[i + 6] == "O")
 				{
-					Console.WriteLine("O WINS!");
-					Thread.Sleep(800);
-					GameOver(playerTurn);
+					Console.WriteLine("\nO WINS!");
+					GameOver(playerTurn, true);
 				}
 			}
 
@@ -108,39 +115,36 @@ namespace TicTacToe
 					spaces[i + 4] == "X" &&
 					spaces[i + 8] == "X")
 				{
-					Console.WriteLine("X WINS!");
-					Thread.Sleep(800);
-					GameOver(playerTurn);
+					Console.WriteLine("\nX WINS!");
+					GameOver(playerTurn, true);
 				}
 				if (spaces[i] == "O" &&
 					spaces[i + 4] == "O" &&
 					spaces[i + 8] == "O")
 				{
-					Console.WriteLine("O WINS!");
-					Thread.Sleep(800);
-					GameOver(playerTurn);
+					Console.WriteLine("\nO WINS!");
+					GameOver(playerTurn, true);
 				}
 			}
 
 			if (spaces[2] == "X" &&
 				spaces[4] == "X" &&
 				spaces[6] == "X" ||
-				
+
 				spaces[0] == "X" &&
 				spaces[1] == "X" &&
 				spaces[2] == "X" ||
-				
+
 				spaces[3] == "X" &&
 				spaces[4] == "X" &&
 				spaces[5] == "X" ||
-				
+
 				spaces[6] == "X" &&
 				spaces[7] == "X" &&
 				spaces[8] == "X")
 			{
-				Console.WriteLine("X WINS!");
-				Thread.Sleep(800);
-				GameOver(playerTurn);
+				Console.WriteLine("\nX WINS!");
+				GameOver(playerTurn, true);
 			}
 
 			if (spaces[2] == "O" &&
@@ -150,27 +154,24 @@ namespace TicTacToe
 				spaces[0] == "O" &&
 				spaces[1] == "O" &&
 				spaces[2] == "O" ||
-							  
+
 				spaces[3] == "O" &&
 				spaces[4] == "O" &&
 				spaces[5] == "O" ||
-							  
+
 				spaces[6] == "O" &&
 				spaces[7] == "O" &&
 				spaces[8] == "O")
 			{
-				Console.WriteLine("O WINS!");
-				Thread.Sleep(800);
-				GameOver(playerTurn);
+				Console.WriteLine("\nO WINS!");
+				GameOver(playerTurn, true);
 			}
 
 			// END WIN CONDITIONS
 
-				if (count == 9)
+			if (count == 9)
 			{
-				Console.WriteLine("TIE");
-				Thread.Sleep(800);
-				GameOver(playerTurn);
+				GameOver(playerTurn, false);
 			}
 			else
 
@@ -250,42 +251,108 @@ namespace TicTacToe
 
 		}
 
-		static void GameOver(int playerTurn)
+		static void GameOver(int playerTurn, bool winState)
 		{
 			string userChoice = null;
 
-			if (playerTurn % 2 == 1)
+			if (winState)
 			{
-				Console.WriteLine("Congratulations Player 1!");
+				Console.Beep(800, 200);
+				Console.Beep(800, 200);
+
+				Thread.Sleep(800);
+
+				if (playerTurn % 2 == 1)
+				{
+					Thread.Sleep(800);
+					Console.WriteLine("\nCongratulations Player 1!");
+				}
+				else
+				{
+					Console.WriteLine("\nCongratulations Player 2!");
+				}
 			}
 			else
 			{
-				Console.WriteLine("Congratulations Player 2!");
+				Console.Beep(230, 1000);
+				Console.Beep(200, 1000);
+				Console.WriteLine("\nTIE! Better luck next time.");
 			}
 
+			Thread.Sleep(800);
 			Console.WriteLine("Game Over!");
 			Thread.Sleep(1000);
-			Console.Clear();
-			Console.Write("Play Again? (Y) (N)");
+			Console.Write("\nPlay Again? (Y) (N)\n\n");
 
 			userChoice = Console.ReadLine().ToUpper();
 
 			while (userChoice != "Y" && userChoice != "N")
 			{
-				Console.Clear();
-				Console.WriteLine("Play Again? (Y) (N)");
+				Console.WriteLine();
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				ClearCurrentConsoleLine();
+				ClearCurrentConsoleLine();
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				ClearCurrentConsoleLine();
 				userChoice = Console.ReadLine().ToUpper();
+
 			}
 
 			if (userChoice == "Y")
 			{
+				Console.Write("\n");
+				Thread.Sleep(100);
+				Console.Write("A");
+				Thread.Sleep(100);
+				Console.Write("l");
+				Thread.Sleep(100);
+				Console.Write("r");
+				Thread.Sleep(100);
+				Console.Write("i");
+				Thread.Sleep(100);
+				Console.Write("g");
+				Thread.Sleep(100);
+				Console.Write("h");
+				Thread.Sleep(100);
+				Console.Write("t");
+				Thread.Sleep(100);
+				Console.Write(",");
+				Thread.Sleep(100);
+				Console.Write(" ");
+				Thread.Sleep(100);
+				Console.Write("g");
+				Thread.Sleep(100);
+				Console.Write("e");
+				Thread.Sleep(100);
+				Console.Write("t");
+				Thread.Sleep(100);
+				Console.Write(" ");
+				Thread.Sleep(100);
+				Console.Write("r");
+				Thread.Sleep(100);
+				Console.Write("e");
+				Thread.Sleep(100);
+				Console.Write("a");
+				Thread.Sleep(100);
+				Console.Write("d");
+				Thread.Sleep(100);
+				Console.Write("y");
+				Thread.Sleep(200);
+				Console.Write(".");
+				Thread.Sleep(400);
+				Console.Write(".");
+				Thread.Sleep(600);
+				Console.Write(".");
+				Thread.Sleep(600);
+				Console.Write(".");
+				Thread.Sleep(1000);
 				NewGame();
 			}
 
 			if (userChoice == "N")
 			{
 				Console.Clear();
-				Console.WriteLine("Goodbye!");
+				Console.WriteLine("\nGoodbye!\n");
 				Environment.Exit(0);
 			}
 
