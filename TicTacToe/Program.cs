@@ -71,8 +71,9 @@ namespace TicTacToe
 		/// <param name="isPlayerOne">Detects current player</param>
 		/// <param name="spaces">Collects + displays current board values</param>
 		/// <returns></returns>
-		static void BuildBoard(bool isX, bool isO, bool isPlayerOne, string[] spaces, int count, int playerTurn)
+		static void BuildBoard(bool isX, bool isO, bool isPlayerOne, string[] spaces, int filledSpaces, int playerTurn)
 		{
+			// Models grid for drawing board
 			string topOfBoard = $"	{spaces[0]}	|	{spaces[1]}	|	{spaces[2]}";
 			string line1 = "______________________________________";
 			string midBoard = $"	{spaces[3]}	|	{spaces[4]}	|	{spaces[5]}";
@@ -80,6 +81,11 @@ namespace TicTacToe
 			string bottomOfBoard = $"	{spaces[6]}	|	{spaces[7]}	|	{spaces[8]}";
 
 			string currentPlayer = null;
+
+			// If odd turn, player 1
+			// If even turn, player 2
+			// This isn't reflected accurately by code since first move is considered turn 0;
+			// But it makes sense in practice
 
 			if (playerTurn % 2 == 0)
 			{
@@ -90,6 +96,7 @@ namespace TicTacToe
 				currentPlayer = "Player 2";
 			}
 
+			// Calls console to write board
 			Console.WriteLine($"\n1.) Top Left");
 			Console.WriteLine($"2.) Top Mid".PadRight(28) + topOfBoard);
 			Console.WriteLine($"3.) Top Right".PadRight(30) + line1);
@@ -178,19 +185,22 @@ namespace TicTacToe
 				Console.WriteLine("\nO WINS!");
 				GameOver(playerTurn, true);
 			}
-
 			// END WIN CONDITIONS
 
-			if (count == 9)
+			// If board is filled, and no winning pattern exists, game ends with no win state
+			if (filledSpaces == 9)
 			{
 				GameOver(playerTurn, false);
 			}
 			else
-
+				// If game is not over, user is prompted to choose a space
 				Console.Write("Choose a space: ");
 
+			// Current move is taken from user input
 			string choiceForSpace = Console.ReadLine();
 
+			// Console will only accept numbers 1 through 9 as valid input,
+			// And will continue to prompt for move until correct input is received
 			while (choiceForSpace != "1" &&
 				choiceForSpace != "2" &&
 				choiceForSpace != "3" &&
@@ -212,7 +222,7 @@ namespace TicTacToe
 				spaces[int.Parse(choiceForSpace) - 1] != "O" &&
 				spaces[int.Parse(choiceForSpace) - 1] != "X")
 			{
-				count++;
+				filledSpaces++;
 				spaces[int.Parse(choiceForSpace) - 1] = "X";
 				Console.Clear();
 
@@ -227,7 +237,8 @@ namespace TicTacToe
 					isO = !isO;
 				}
 
-				BuildBoard(isX, isO, isPlayerOne, spaces, count, playerTurn);
+				// Rebuild board with updated state
+				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
 			}
 
 			// If player is O, and space chosen is not already X or O, space chosen becomes O
@@ -235,7 +246,7 @@ namespace TicTacToe
 				spaces[int.Parse(choiceForSpace) - 1] != "O" &&
 				spaces[int.Parse(choiceForSpace) - 1] != "X")
 			{
-				count++;
+				filledSpaces++;
 				spaces[int.Parse(choiceForSpace) - 1] = "O";
 				Console.Clear();
 
@@ -250,16 +261,17 @@ namespace TicTacToe
 					isO = !isO;
 				}
 
-				BuildBoard(isX, isO, isPlayerOne, spaces, count, playerTurn);
+				//Rebuild board with updated state
+				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
 			}
 
-			// If above conditions are not met, 
+			// If above conditions are not met, user is prompted to choose a valid space
 			else
 			{
 				Console.WriteLine("Please select an empty space!");
 				Thread.Sleep(800);
 				Console.Clear();
-				BuildBoard(isX, isO, isPlayerOne, spaces, count, playerTurn);
+				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
 			}
 
 		}
@@ -316,6 +328,7 @@ namespace TicTacToe
 
 			}
 
+			// Basic animation for beginning a new game
 			if (userChoice == "Y")
 			{
 				Console.Write("\n");
@@ -367,6 +380,7 @@ namespace TicTacToe
 				NewGame();
 			}
 
+			// Exits game if user is sick of playing
 			if (userChoice == "N")
 			{
 				Console.Clear();
@@ -376,6 +390,8 @@ namespace TicTacToe
 
 		}
 
+		// Sets cursor to beginning of line and rewrites line
+		// This allows input field to be reset without bumping down to new line
 		public static void ClearCurrentConsoleLine()
 		{
 			int currentLineCursor = Console.CursorTop;
