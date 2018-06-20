@@ -6,16 +6,23 @@ namespace TicTacToe
 {
 	class Program
 	{
+		// Possible spaces for X or O
+		static string[] spaces = new string[9];
+
 		static void Main(string[] args)
 		{
 			NewGame();
 		}
+
+
 
 		/// <summary>
 		/// Initiates a new game of Tic Tac Toe
 		/// </summary>
 		static void NewGame()
 		{
+			spaces = new string[9];
+
 			bool isX = false;
 			bool isO = false;
 
@@ -23,8 +30,6 @@ namespace TicTacToe
 			int playerTurn = 0;
 
 			bool isPlayerOne = true;
-
-			string[] spaces = new string[9];
 
 			Console.Clear();
 			Console.WriteLine("Please pick a letter for player 1: (X) or (O)\n");
@@ -38,65 +43,35 @@ namespace TicTacToe
 				ClearCurrentConsoleLine();
 				Console.SetCursorPosition(0, Console.CursorTop - 1);
 				ClearCurrentConsoleLine();
+
 				input = Console.ReadLine().ToUpper();
 			}
 
-			if (input == "X")
-			{
-				isX = true;
-			}
-
-			else if (input == "O")
-			{
-				isO = true;
-			}
+			isX = (input == "X");
+			isO = (input == "O");
 
 			Thread.Sleep(400);
 			Console.WriteLine("\nOkay!");
 			Thread.Sleep(600);
 			Console.WriteLine("\nLet's begin!");
-			Thread.Sleep(600);
+			Thread.Sleep(800);
 			Console.Clear();
 
 			// Calls BuildBoard, passing in user chosen letter + initial status
-			// (player one = true, nine empty spaces, 0 current moves made)
-			BuildBoard(isX, isO, isPlayerOne, spaces, count, playerTurn);
+			PlayGame(isX, isPlayerOne, count, playerTurn);
 		}
 
-		/// <summary>
-		/// Builds the board as players make moves
-		/// </summary>
-		/// <param name="isX">Detects if current player is placing X</param>
-		/// <param name="isO">Detects if current player is placing O</param>
-		/// <param name="isPlayerOne">Detects current player</param>
-		/// <param name="spaces">Collects + displays current board values</param>
-		/// <returns></returns>
-		static void BuildBoard(bool isX, bool isO, bool isPlayerOne, string[] spaces, int filledSpaces, int playerTurn)
+		// Draws grid, current characters, and possible moves
+		static void DrawBoard(string currentPlayer)
 		{
-			// Models grid for drawing board
+			Console.Clear();
+
 			string topOfBoard = $"	{spaces[0]}	|	{spaces[1]}	|	{spaces[2]}";
 			string line1 = "______________________________________";
 			string midBoard = $"	{spaces[3]}	|	{spaces[4]}	|	{spaces[5]}";
 			string line2 = $"______________________________________";
 			string bottomOfBoard = $"	{spaces[6]}	|	{spaces[7]}	|	{spaces[8]}";
 
-			string currentPlayer = null;
-
-			// If odd turn, player 1
-			// If even turn, player 2
-			// This isn't reflected accurately by code since first move is considered turn 0;
-			// But it makes sense in practice
-
-			if (playerTurn % 2 == 0)
-			{
-				currentPlayer = "Player 1";
-			}
-			if (playerTurn % 2 == 1)
-			{
-				currentPlayer = "Player 2";
-			}
-
-			// Calls console to write board
 			Console.WriteLine($"\n1.) Top Left");
 			Console.WriteLine($"2.) Top Mid".PadRight(28) + topOfBoard);
 			Console.WriteLine($"3.) Top Right".PadRight(30) + line1);
@@ -107,173 +82,121 @@ namespace TicTacToe
 			Console.WriteLine("8.) Bottom Mid".PadRight(28) + bottomOfBoard);
 			Console.WriteLine("9.) Bottom Right");
 			Console.WriteLine($"\n{currentPlayer}'s turn\n");
+		}
 
-			// WIN CONDITIONS -- easier way to write this??
-			for (int i = 0; i < spaces.Length - 6; i++)
+		static bool HasWinner()
+		{
 			{
-				if (spaces[i] == "X" &&
-					spaces[i + 3] == "X" &&
-					spaces[i + 6] == "X")
-				{
-					Console.WriteLine("\nX WINS!");
-					GameOver(playerTurn, true);
-				}
+				return IsGameOver("X") || IsGameOver("O");
+			}
+		}
 
-				if (spaces[i] == "O" &&
-					spaces[i + 3] == "O" &&
-					spaces[i + 6] == "O")
-				{
-					Console.WriteLine("\nO WINS!");
-					GameOver(playerTurn, true);
-				}
+		// Declares win state
+		static bool IsGameOver(string character)
+		{
+
+			return ((spaces[0] == character && spaces[3] == character && spaces[6] == character) ||
+					(spaces[0] == character && spaces[4] == character && spaces[8] == character) ||
+					(spaces[2] == character && spaces[4] == character && spaces[6] == character) ||
+					(spaces[0] == character && spaces[1] == character && spaces[2] == character) ||
+					(spaces[3] == character && spaces[4] == character && spaces[5] == character) ||
+					(spaces[6] == character && spaces[7] == character && spaces[8] == character) ||
+					(spaces[1] == character && spaces[4] == character && spaces[7] == character) ||
+					(spaces[2] == character && spaces[5] == character && spaces[8] == character));
+		}
+
+		/// <summary>
+		/// Places characters as players make moves
+		/// </summary>
+		/// <param name="isX">Detects if current player is placing X</param>
+		/// <param name="isPlayerOne">Detects current player</param>
+		/// <param name="spaces">Collects + displays current board values</param>
+		/// <returns></returns>
+		static void PlayGame(bool isX, bool isPlayerOne, int filledSpaces, int playerTurn)
+		{
+
+			string currentPlayer = (playerTurn % 2 == 0) ? "Player 1" : "Player 2";
+
+			while (!HasWinner() && filledSpaces < 9)
+			{
+				DrawBoard(currentPlayer);
+
+				string character = (isX) ? "X" : "O";
+
+				string choiceForSpace = GetUserChoiceForSpace();
+
+				// Gets space from player input (-1 to account for 0-based index)
+				int index = int.Parse(choiceForSpace) - 1;
+
+				spaces[index] = character;
+				filledSpaces++;
+
+				isPlayerOne = !isPlayerOne;
+				playerTurn++;
+
+				isX = !isX;
 			}
 
-			for (int i = 0; i < spaces.Length - 8; i++)
-			{
-				if (spaces[i] == "X" &&
-					spaces[i + 4] == "X" &&
-					spaces[i + 8] == "X")
-				{
-					Console.WriteLine("\nX WINS!");
-					GameOver(playerTurn, true);
-				}
-				if (spaces[i] == "O" &&
-					spaces[i + 4] == "O" &&
-					spaces[i + 8] == "O")
-				{
-					Console.WriteLine("\nO WINS!");
-					GameOver(playerTurn, true);
-				}
-			}
+			// Update board with winning/tie move
+			DrawBoard(currentPlayer);
 
-			if (spaces[2] == "X" &&
-				spaces[4] == "X" &&
-				spaces[6] == "X" ||
-
-				spaces[0] == "X" &&
-				spaces[1] == "X" &&
-				spaces[2] == "X" ||
-
-				spaces[3] == "X" &&
-				spaces[4] == "X" &&
-				spaces[5] == "X" ||
-
-				spaces[6] == "X" &&
-				spaces[7] == "X" &&
-				spaces[8] == "X")
+			if (IsGameOver("X"))
 			{
 				Console.WriteLine("\nX WINS!");
 				GameOver(playerTurn, true);
 			}
 
-			if (spaces[2] == "O" &&
-				spaces[4] == "O" &&
-				spaces[6] == "O" ||
-
-				spaces[0] == "O" &&
-				spaces[1] == "O" &&
-				spaces[2] == "O" ||
-
-				spaces[3] == "O" &&
-				spaces[4] == "O" &&
-				spaces[5] == "O" ||
-
-				spaces[6] == "O" &&
-				spaces[7] == "O" &&
-				spaces[8] == "O")
+			else if (IsGameOver("O"))
 			{
 				Console.WriteLine("\nO WINS!");
 				GameOver(playerTurn, true);
 			}
-			// END WIN CONDITIONS
 
-			// If board is filled, and no winning pattern exists, game ends with no win state
-			if (filledSpaces == 9)
+			else if (filledSpaces == 9)
 			{
+				// draw
 				GameOver(playerTurn, false);
 			}
-			else
-				// If game is not over, user is prompted to choose a space
-				Console.Write("Choose a space: ");
+		}
 
-			// Current move is taken from user input
-			string choiceForSpace = Console.ReadLine();
-
+		private static string GetUserChoiceForSpace()
+		{
 			// Console will only accept numbers 1 through 9 as valid input,
 			// And will continue to prompt for move until correct input is received
-			while (choiceForSpace != "1" &&
-				choiceForSpace != "2" &&
-				choiceForSpace != "3" &&
-				choiceForSpace != "4" &&
-				choiceForSpace != "5" &&
-				choiceForSpace != "6" &&
-				choiceForSpace != "7" &&
-				choiceForSpace != "8" &&
-				choiceForSpace != "9")
+			string[] validChoices = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+			Console.Write("Choose a space: ");
+			string choiceForSpace = Console.ReadLine();
+			Console.WriteLine();
+
+			while (!validChoices.Contains(choiceForSpace) || !IsAvailable(choiceForSpace))
 			{
+
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				Console.WriteLine("");
 				Console.SetCursorPosition(0, Console.CursorTop - 1);
 				ClearCurrentConsoleLine();
-				Console.Write("Choose a space: ");
+				Console.SetCursorPosition(0, Console.CursorTop - 1);
+				ClearCurrentConsoleLine();
+				Console.WriteLine("Please select an empty space!");
+
 				choiceForSpace = Console.ReadLine();
 			}
 
-			// If player is X, and space chosen is not already X or O, space chosen becomes X
-			if (isX == true &&
-				spaces[int.Parse(choiceForSpace) - 1] != "O" &&
-				spaces[int.Parse(choiceForSpace) - 1] != "X")
-			{
-				filledSpaces++;
-				spaces[int.Parse(choiceForSpace) - 1] = "X";
-				Console.Clear();
+			return choiceForSpace;
+		}
 
-				// Switch players
-				isPlayerOne = !isPlayerOne;
-				playerTurn++;
+		/// <summary>
+		/// Returns if a space is available
+		/// </summary>
+		/// <param name="choiceForSpace"></param>
+		/// <param name="spaces"></param>
+		/// <returns></returns>
+		private static bool IsAvailable(string choiceForSpace)
+		{
+			int index = int.Parse(choiceForSpace) - 1;
 
-				// Switch X for O on player switch
-				if (isPlayerOne = !isPlayerOne)
-				{
-					isX = !isX;
-					isO = !isO;
-				}
-
-				// Rebuild board with updated state
-				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
-			}
-
-			// If player is O, and space chosen is not already X or O, space chosen becomes O
-			else if (isO == true &&
-				spaces[int.Parse(choiceForSpace) - 1] != "O" &&
-				spaces[int.Parse(choiceForSpace) - 1] != "X")
-			{
-				filledSpaces++;
-				spaces[int.Parse(choiceForSpace) - 1] = "O";
-				Console.Clear();
-
-				// Switch players
-				isPlayerOne = !isPlayerOne;
-				playerTurn++;
-
-				// Switch X for O on player switch
-				if (isPlayerOne = !isPlayerOne)
-				{
-					isX = !isX;
-					isO = !isO;
-				}
-
-				//Rebuild board with updated state
-				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
-			}
-
-			// If above conditions are not met, user is prompted to choose a valid space
-			else
-			{
-				Console.WriteLine("Please select an empty space!");
-				Thread.Sleep(800);
-				Console.Clear();
-				BuildBoard(isX, isO, isPlayerOne, spaces, filledSpaces, playerTurn);
-			}
-
+			return String.IsNullOrEmpty(spaces[index]);
 		}
 
 		/// <summary>
@@ -377,6 +300,7 @@ namespace TicTacToe
 				Thread.Sleep(600);
 				Console.Write(".");
 				Thread.Sleep(1000);
+
 				NewGame();
 			}
 
