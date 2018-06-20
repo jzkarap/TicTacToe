@@ -86,9 +86,7 @@ namespace TicTacToe
 
 		static bool HasWinner()
 		{
-			{
-				return IsGameOver("X") || IsGameOver("O");
-			}
+			return IsGameOver("X") || IsGameOver("O");
 		}
 
 		// Declares win state
