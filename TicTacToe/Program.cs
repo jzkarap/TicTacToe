@@ -139,6 +139,7 @@ namespace TicTacToe
 			{
 				ClearCurrentConsoleLineAlt();
 				ClearCurrentConsoleLineAlt();
+				Thread.Sleep(600);
 				Console.WriteLine("\nX WINS!");
 				GameOver(playerTurn, true);
 			}
@@ -147,6 +148,7 @@ namespace TicTacToe
 			{
 				ClearCurrentConsoleLineAlt();
 				ClearCurrentConsoleLineAlt();
+				Thread.Sleep(600);
 				Console.WriteLine("\nO WINS!");
 				GameOver(playerTurn, true);
 			}
@@ -226,6 +228,8 @@ namespace TicTacToe
 			}
 			else
 			{
+				ClearCurrentConsoleLineAlt();
+				ClearCurrentConsoleLineAlt();
 				Console.Beep(230, 1000);
 				Console.Beep(200, 1000);
 				Console.WriteLine("\nTIE! Better luck next time.");
