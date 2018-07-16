@@ -14,8 +14,6 @@ namespace TicTacToe
 			NewGame();
 		}
 
-
-
 		/// <summary>
 		/// Initiates a new game of Tic Tac Toe
 		/// </summary>
@@ -32,7 +30,7 @@ namespace TicTacToe
 			bool isPlayerOne = true;
 
 			Console.Clear();
-			Console.WriteLine("Please pick a letter for player 1: (X) or (O)\n");
+			Console.WriteLine("Please pick a letter for to start: (X) or (O)\n");
 
 			string input = Console.ReadLine().ToUpper();
 
@@ -62,8 +60,10 @@ namespace TicTacToe
 		}
 
 		// Draws grid, current characters, and possible moves
-		static void DrawBoard(string currentPlayer)
+		static void DrawBoard(int playerTurn)
 		{
+			string currentPlayer = (playerTurn % 2 == 0) ? "Player 1" : "Player 2";
+
 			Console.Clear();
 
 			string topOfBoard = $"	{spaces[0]}	|	{spaces[1]}	|	{spaces[2]}";
@@ -112,15 +112,12 @@ namespace TicTacToe
 		/// <returns></returns>
 		static void PlayGame(bool isX, bool isPlayerOne, int filledSpaces, int playerTurn)
 		{
-
-			string currentPlayer = (playerTurn % 2 == 0) ? "Player 1" : "Player 2";
-
 			while (!HasWinner() && filledSpaces < 9)
 			{
-				DrawBoard(currentPlayer);
+				DrawBoard(playerTurn);
 
 				string character = (isX) ? "X" : "O";
-
+				
 				string choiceForSpace = GetUserChoiceForSpace();
 
 				// Gets space from player input (-1 to account for 0-based index)
@@ -136,16 +133,20 @@ namespace TicTacToe
 			}
 
 			// Update board with winning/tie move
-			DrawBoard(currentPlayer);
+			DrawBoard(playerTurn);
 
 			if (IsGameOver("X"))
 			{
+				ClearCurrentConsoleLineAlt();
+				ClearCurrentConsoleLineAlt();
 				Console.WriteLine("\nX WINS!");
 				GameOver(playerTurn, true);
 			}
 
 			else if (IsGameOver("O"))
 			{
+				ClearCurrentConsoleLineAlt();
+				ClearCurrentConsoleLineAlt();
 				Console.WriteLine("\nO WINS!");
 				GameOver(playerTurn, true);
 			}
@@ -252,52 +253,8 @@ namespace TicTacToe
 			// Basic animation for beginning a new game
 			if (userChoice == "Y")
 			{
-				Console.Write("\n");
-				Thread.Sleep(100);
-				Console.Write("A");
-				Thread.Sleep(100);
-				Console.Write("l");
-				Thread.Sleep(100);
-				Console.Write("r");
-				Thread.Sleep(100);
-				Console.Write("i");
-				Thread.Sleep(100);
-				Console.Write("g");
-				Thread.Sleep(100);
-				Console.Write("h");
-				Thread.Sleep(100);
-				Console.Write("t");
-				Thread.Sleep(100);
-				Console.Write(",");
-				Thread.Sleep(100);
-				Console.Write(" ");
-				Thread.Sleep(100);
-				Console.Write("g");
-				Thread.Sleep(100);
-				Console.Write("e");
-				Thread.Sleep(100);
-				Console.Write("t");
-				Thread.Sleep(100);
-				Console.Write(" ");
-				Thread.Sleep(100);
-				Console.Write("r");
-				Thread.Sleep(100);
-				Console.Write("e");
-				Thread.Sleep(100);
-				Console.Write("a");
-				Thread.Sleep(100);
-				Console.Write("d");
-				Thread.Sleep(100);
-				Console.Write("y");
-				Thread.Sleep(200);
-				Console.Write(".");
-				Thread.Sleep(400);
-				Console.Write(".");
-				Thread.Sleep(600);
-				Console.Write(".");
-				Thread.Sleep(600);
-				Console.Write(".");
-				Thread.Sleep(1000);
+				ClearCurrentConsoleLineAlt();
+				AnimateString("Alright, get ready...", .1, true);
 
 				NewGame();
 			}
@@ -320,6 +277,49 @@ namespace TicTacToe
 			Console.SetCursorPosition(0, Console.CursorTop);
 			Console.Write(new string(' ', Console.WindowWidth));
 			Console.SetCursorPosition(0, currentLineCursor);
+		}
+
+		// An alternate way to clear the current line
+		static void ClearCurrentConsoleLineAlt()
+		{
+			Console.SetCursorPosition(0, Console.CursorTop - 1);
+			Console.Write(new string(' ', Console.WindowWidth));
+			Console.SetCursorPosition(0, Console.CursorTop - 1);
+		}
+
+		/// <summary>
+		/// Takes a string, a delay in seconds, and a choice between horizontal or vertical print,
+		/// does a rudimentary animation using Thread.Sleep
+		/// </summary>
+		/// <param name="stringToPrint">The string to print</param>
+		/// <param name="printDelayInSeconds">The delay between each printed letter</param>
+		/// <param name="inline">A choice for either horizontal (inline) or vertical (block) printing</param>
+		static void AnimateString(string stringToPrint, double printDelayInSeconds, bool inline)
+		{
+			int count = 0;
+			// Thread.Sleep uses 1/1000s of second as parameter; must convert user choice to this increment
+			int printDelay = (int)(printDelayInSeconds * 1000);
+			// Playing around with variables to get code close to natural language
+			int lengthOfString = stringToPrint.Length;
+
+			while (count < lengthOfString)
+			{
+				if (inline == true)
+				{
+					Console.Write(stringToPrint[count]);
+					Thread.Sleep(printDelay);
+				}
+				else
+				{
+					Console.WriteLine(stringToPrint[count]);
+					Thread.Sleep(printDelay);
+				}
+
+				count++;
+			}
+
+			Thread.Sleep(printDelay);
+			Console.WriteLine();
 		}
 	}
 }
